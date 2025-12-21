@@ -35,6 +35,14 @@
     </None>
     <None Include=".\.editorconfig" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Release\netstandard2.0\publish\**">
+    <Pack>True</Pack>
+    <PackagePath>\lib</PackagePath>
+    </None>
+  </ItemGroup>
+
   <ItemGroup>
     <None Include="PSPhlebotomist.psd1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

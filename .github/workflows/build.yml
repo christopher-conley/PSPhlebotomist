@@ -31,16 +31,29 @@ jobs:
         if: ${{ steps.install_paket.outcome == 'success' }}
         run: dotnet build --configuration Release PSPhlebotomist.sln
 
-      # - name: Dotnet publish
-      #   id: dotnet_publish
-      #   if: ${{ steps.build_module.outcome == 'success' }}
-      #   run: dotnet publish --configuration Release
+      - name: Dotnet publish
+        id: dotnet_publish
+        if: ${{ steps.build_module.outcome == 'success' }}
+        run: dotnet publish --configuration Release
 
+      - name: Install PowerShell
+        id: install_powershell
+        uses: PSModule/install-powershell@v1
+        with:
+          Version: 7.5.4
+      
       - name: publish_ps_module
         id: publish_ps_module
-        if: ${{ steps.build_module.outcome == 'success' }}
-        uses: natescherer/publish-powershell-action@v1
-        with:
-          token: ${{ secrets.GALLERY_API_KEY }}
-          target: gallery
-          path: './PSPhlebotomist/bin/Release/netstandard2.0/publish/'
+        if: ${{ steps.install_powershell.outcome == 'success' }}
+        shell: pwsh
+        run: |
+          Install-Module -Name "PowerShellGet" -Force -Confirm:$false -Scope CurrentUser
+          $ProjectName = "PSPhlebotomist"
+          $PublishPath = Join-Path -Path "${{ github.workspace }}" -ChildPath "${ProjectName}" -AdditionalChildPath @(
+            "bin",
+            "Release",
+            "netstandard2.0"
+          )
+          Set-Location "${PublishPath}"
+          Rename-Item -Path ".\publish" -NewName "${ProjectName}"
+          Publish-Module -Path ".\${ProjectName}" -NuGetApiKey ${{ secrets.GALLERY_API_KEY }} -Force -Confirm:$false -Verbose
