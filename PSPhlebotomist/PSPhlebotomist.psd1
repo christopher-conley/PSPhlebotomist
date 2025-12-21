@@ -114,7 +114,7 @@
             ProjectUri = 'https://github.com/christopher-conley/PSPhlebotomist'
 
             # A URL to an icon representing this module.
-            IconUri = 'https://github.com/christopher-conley/PSPhlebotomist/raw/refs/heads/main/Properties/res/PSPhlebotomist_256x256.png'
+            IconUri = 'https://raw.githubusercontent.com/christopher-conley/PSPhlebotomist/c9a0075290114b4a25ff4abed7cb98fe871b3ae3/PSPhlebotomist/Properties/res/PSPhlebotomist_256x256.png'
 
             # ReleaseNotes of this module
             ReleaseNotes = 'https://github.com/christopher-conley/PSPhlebotomist/releases'
