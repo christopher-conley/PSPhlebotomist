@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>PSPhlebotomist</AssemblyName>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ProjectGuid>BADB100D-2321-4D45-4F57-4D5ABADB100D</ProjectGuid>
+    <LangVersion>latest</LangVersion>
+    <Version>2025.12.21.1039</Version>
+    <Nullable>enable</Nullable>
+    <Authors>Christopher Conley</Authors>
+    <Description>It's just a little prick</Description>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <ApplicationIcon>Properties\res\PSPhlebotomist_256x256.ico</ApplicationIcon>
+    <PackageIcon>PSPhlebotomist_256x256.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/christopher-conley/PSPhlebotomist</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/christopher-conley/PSPhlebotomist</RepositoryUrl>
+    <Copyright>Copyright (c) 2025 Christopher Conley</Copyright>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>injection;dll-injection;injector;dll-injector;mod;ue4ss;reshade;security</PackageTags>
+    <PackageReleaseNotes>Initial release</PackageReleaseNotes>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include=".\.editorconfig" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PSPhlebotomist.psd1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="PolySharp" Version="1.15.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EditorConfigFiles Remove=".\.editorconfig" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Properties\res\PSPhlebotomist_256x256.ico" />
+    <Content Include="Properties\res\PSPhlebotomist_256x256.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Config\Logging\Runtime\serilog-config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Properties\res\PSPhlebotomist_256x256.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+  <Import Project="..\.paket\Paket.Restore.targets" />
+</Project>
