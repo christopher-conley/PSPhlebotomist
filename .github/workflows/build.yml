@@ -1,0 +1,46 @@
+name: build_psmodule
+
+on:
+#  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '10.0.x' ]
+
+    steps:
+      - uses: actions/checkout@v5
+      - name: Setup dotnet ${{ matrix.dotnet-version }}
+        id: setup_dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+
+      - name: install_paket
+        id: install_paket
+        run: |
+          dotnet tool install --global Paket
+          dotnet tool restore
+          dotnet paket install
+      
+      - name: build_module
+        id: build_module
+        if: ${{ steps.install_paket.outcome == 'success' }}
+        run: dotnet build --configuration Release PSPhlebotomist.sln
+
+      # - name: Dotnet publish
+      #   id: dotnet_publish
+      #   if: ${{ steps.build_module.outcome == 'success' }}
+      #   run: dotnet publish --configuration Release
+
+      - name: publish_ps_module
+        id: publish_ps_module
+        if: ${{ steps.build_module.outcome == 'success' }}
+        uses: natescherer/publish-powershell-action@v1
+        with:
+          token: ${{ secrets.GALLERY_API_KEY }}
+          target: gallery
+          path: './PSPhlebotomist/bin/Release/netstandard2.0/publish/'
