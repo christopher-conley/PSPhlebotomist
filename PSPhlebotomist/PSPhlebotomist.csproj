@@ -14,7 +14,7 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <ApplicationIcon>Properties\res\PSPhlebotomist_256x256.ico</ApplicationIcon>
-    <PackageIcon>PSPhlebotomist_256x256.png</PackageIcon>
+    <PackageIcon>Properties\res\PSPhlebotomist_256x256.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/christopher-conley/PSPhlebotomist</PackageProjectUrl>
     <RepositoryUrl>https://github.com/christopher-conley/PSPhlebotomist</RepositoryUrl>
