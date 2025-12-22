@@ -173,7 +173,7 @@ namespace PSPhlebotomist.PSCmdlets
 
                 int pid = 0;
 
-                if (inoculation.InjectType == "pname")
+                if (inoculation.InjectType == "pname" || inoculation.InjectType == "default")
                 {
                     if (inoculation.ShouldWait)
                     {

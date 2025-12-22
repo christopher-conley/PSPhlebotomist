@@ -60,8 +60,19 @@ namespace PSPhlebotomist.PSCmdlets
         /// and accessible to the current user context.</remarks>
         [Parameter(
             Mandatory = false,
-            ValueFromPipeline = true,
-            ValueFromPipelineByPropertyName = true)]
+            ValueFromPipeline = false,
+            ValueFromPipelineByPropertyName = true,
+            ParameterSetName = "pid")]
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipeline = false,
+            ValueFromPipelineByPropertyName = true,
+            ParameterSetName = "pname")]
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipeline = false,
+            ValueFromPipelineByPropertyName = true,
+            ParameterSetName = "default")]
         public string[] Inject
         {
             get
@@ -78,14 +89,25 @@ namespace PSPhlebotomist.PSCmdlets
         /// <remarks>This parameter is mandatory when using the 'pid' parameter set. It cannot be used simultaneously
         /// with the Name parameter. The process must be accessible and running for injection to succeed. This parameter
         /// can be referenced by the aliases 'ProcessId' or 'Id'.</remarks>
-        [Alias("ProcessId", "Id")]
+        [Alias("ProcessId", "PID")]
         [Parameter(
             Mandatory = true,
             ValueFromPipeline = false,
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = "pid"
             )]
-        public nint PID { get; protected internal set; } = Statics.INT_FLOOR;
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipeline = false,
+            ValueFromPipelineByPropertyName = true,
+            ParameterSetName = "pname"
+            )]
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipeline = false,
+            ValueFromPipelineByPropertyName = true,
+            ParameterSetName = "default")]
+        public nint Id { get; protected internal set; } = Statics.INT_FLOOR;
 
         /// <summary>
         /// Gets or sets the name of the target process to inject DLLs into.
@@ -93,14 +115,26 @@ namespace PSPhlebotomist.PSCmdlets
         /// <remarks>This parameter is used with the 'pname' parameter set. It cannot be used simultaneously with the
         /// PID parameter. When combined with the Wait switch, the cmdlet will wait for a process with this name to launch
         /// before attempting injection. This parameter can be referenced by the aliases 'ProcessName' or 'PName'.</remarks>
-        [Alias("ProcessName", "PName")]
+        [Alias("Name", "PName")]
         [Parameter(
-            Mandatory = false,
-            ValueFromPipeline = true,
+            Mandatory = true,
+            ValueFromPipeline = false,
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = "pname"
             )]
-        public string Name
+
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipeline = false,
+            ValueFromPipelineByPropertyName = true,
+            ParameterSetName = "pid"
+            )]
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipeline = false,
+            ValueFromPipelineByPropertyName = true,
+            ParameterSetName = "default")]
+        public string ProcessName
         {
             get
             {
@@ -120,7 +154,21 @@ namespace PSPhlebotomist.PSCmdlets
         [Parameter(
             Mandatory = false,
             ValueFromPipeline = false,
-            ValueFromPipelineByPropertyName = true)]
+            ValueFromPipelineByPropertyName = true,
+            ParameterSetName = "pname"
+            )]
+
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipeline = false,
+            ValueFromPipelineByPropertyName = true,
+            ParameterSetName = "pid"
+            )]
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipeline = false,
+            ValueFromPipelineByPropertyName = true,
+            ParameterSetName = "default")]
         public SwitchParameter Wait { get => _wait; protected internal set => _wait = value; }
 
         /// <summary>
@@ -132,7 +180,18 @@ namespace PSPhlebotomist.PSCmdlets
         [Parameter(
             Mandatory = false,
             ValueFromPipeline = false,
-            ValueFromPipelineByPropertyName = true)]
+            ValueFromPipelineByPropertyName = true,
+            ParameterSetName = "pid")]
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipeline = false,
+            ValueFromPipelineByPropertyName = true,
+            ParameterSetName = "pname")]
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipeline = false,
+            ValueFromPipelineByPropertyName = true,
+            ParameterSetName = "default")]
 
         public nuint Timeout { get; protected internal set; } = Statics.UINT_CEILING;
 
@@ -148,7 +207,18 @@ namespace PSPhlebotomist.PSCmdlets
         [Parameter(
             Mandatory = false,
             ValueFromPipeline = false,
-            ValueFromPipelineByPropertyName = true)]
+            ValueFromPipelineByPropertyName = true,
+            ParameterSetName = "pid")]
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipeline = false,
+            ValueFromPipelineByPropertyName = true,
+            ParameterSetName = "pname")]
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipeline = false,
+            ValueFromPipelineByPropertyName = true,
+            ParameterSetName = "default")]
         public SwitchParameter Admin { get => _admin; protected internal set => _admin = value; }
 
         /// <summary>
@@ -174,36 +244,6 @@ namespace PSPhlebotomist.PSCmdlets
             // if it's the same Cmdlet, you can't call the Write* methods, like WriteInformation, WriteVerbose, etc.,
             // or it'll throw a terminating error. So we have to do something dumb like this to get around that limitation.
             BaseActiveInsertNeedleCmdlet ??= this;
-
-            var cmdletDefaults = Defaults.Cmdlets.GetDefaults<InsertNeedleCmdlet>();
-
-            if (
-                (PID == cmdletDefaults[nameof(PID)] && Name == cmdletDefaults[nameof(Name)]) ||
-                (ParameterSetName != "pid" && ParameterSetName != "pname") ||
-                Inject.Length == 0
-                )
-            {
-                NoAppointment = true;
-            }
-
-            else
-            {
-                patientStates = new IntakeForm
-                {
-                    DllPaths = Inject,
-                    ProcessId = (nuint)PID,
-                    ProcessName = Name,
-                    ShouldWait = Wait.IsPresent,
-                    Timeout = Timeout,
-                    InjectType = ParameterSetName,
-                    ShouldInject = true,
-                };
-
-                patientStates.InjectType = ParameterSetName == "pname" ? "pname" : "pid";
-            }
-
-            NeedsExternalConsult = Admin.IsPresent;
-
         }
 
         /// <summary>
@@ -218,16 +258,61 @@ namespace PSPhlebotomist.PSCmdlets
         {
             base.ProcessRecord();
 
-            ;
+            var cmdletDefaults = Defaults.Cmdlets.GetDefaults<InsertNeedleCmdlet>();
+
+            if (
+                ParameterSetName == "default" &&
+                (Id != cmdletDefaults[nameof(Id)] && ProcessName != cmdletDefaults[nameof(ProcessName)]) &&
+                Inject.Length > 0
+                )
+            {
+                patientStates = new IntakeForm
+                {
+                    DllPaths = Inject,
+                    ProcessId = (nuint)Id,
+                    ProcessName = ProcessName,
+                    ShouldWait = Wait.IsPresent,
+                    Timeout = Timeout,
+                    InjectType = ParameterSetName,
+                    ShouldInject = true,
+                };
+            }
+
+            else if (
+                (Id == cmdletDefaults[nameof(Id)] && ProcessName == cmdletDefaults[nameof(ProcessName)]) ||
+                ((ParameterSetName != "pid" && ParameterSetName != "pname") &&
+                Inject.Length == 0)
+                )
+            {
+                NoAppointment = true;
+            }
+            else
+            {
+                patientStates = new IntakeForm
+                {
+                    DllPaths = Inject,
+                    ProcessId = (nuint)Id,
+                    ProcessName = ProcessName,
+                    ShouldWait = Wait.IsPresent,
+                    Timeout = Timeout,
+                    InjectType = ParameterSetName,
+                    ShouldInject = true,
+                };
+
+                //patientStates.InjectType = ParameterSetName == "pname" ? "pname" : "pid" ? "pid" : "default";
+                patientStates.InjectType = ParameterSetName;
+            }
+
+            NeedsExternalConsult = Admin.IsPresent;
 
             if (NeedsExternalConsult && !Statics.ConsultAuthorized)
             {
                 Dictionary<string, dynamic> patientInfo = new Dictionary<string, dynamic>
-                {
-                    { "OfficeLocation", Assembly.GetExecutingAssembly().Location },
-                    { "CurrentLocation", SessionState.Path.CurrentLocation.Path },
-                    { "ConsultInfo", MyInvocation.Line }
-                };
+        {
+            { "OfficeLocation", Assembly.GetExecutingAssembly().Location },
+            { "CurrentLocation", SessionState.Path.CurrentLocation.Path },
+            { "ConsultInfo", MyInvocation.Line }
+        };
 
                 try
                 {
@@ -243,7 +328,6 @@ namespace PSPhlebotomist.PSCmdlets
                 WriteObject("");
                 return;
             }
-
 
             if (NoAppointment)
             {

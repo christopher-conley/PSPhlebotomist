@@ -8,7 +8,7 @@
     RootModule           = 'PSPhlebotomist.dll'
 
     # Version number of this module.
-    ModuleVersion        = '2025.12.22.0550'
+    ModuleVersion        = '2025.12.22.1639'
 
     # Supported PSEditions
     CompatiblePSEditions = @('Desktop', 'Core')

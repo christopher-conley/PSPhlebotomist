@@ -804,8 +804,8 @@ namespace PSPhlebotomist.Common
                             returnObject = new Dictionary<string, dynamic>
                             {
                                 { "Inject", Array.CreateInstance(typeof(object), 0) },
-                                { "PID", Statics.INT_FLOOR },
-                                { "Name", string.Empty },
+                                { "Id", Statics.INT_FLOOR },
+                                { "ProcessName", string.Empty },
                                 { "Wait", false },
                                 { "Timeout", Statics.UINT_CEILING },
                                 { "Admin", false }
