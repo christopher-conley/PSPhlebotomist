@@ -23,6 +23,34 @@ PSPhlebotomist provides a PowerShell cmdlet for injecting one or more DLLs/PE im
 
 ## Installation
 
+### From PSGallery
+
+1. Open a PowerShell 7+ console and ensure that the `PowerShellGet` module is installed, which enables installation of modules from Microsoft's official PowerShell module repository (you probably already have this, but it doesn't hurt):
+
+```powershell
+Install-Module -Name "PowerShellGet" -Force -Confirm:$false
+```
+
+2. Install the PSPhlebotomist module:
+
+```powershell
+Install-Module -Name PSPhlebotomist
+```
+
+3. Import the module
+
+```powershell
+Import-Module -Name PSPhlebotomist
+```
+
+4. Run in interactive mode:
+
+```powershell
+New-Injection
+```
+
+Continue reading for more usage examples below, including examples of runtime commandline parameter usage, which enables automated/zero-user-interaction runs.
+
 ### From Source
 ### STOP AND READ THIS IF YOU WANT TO BUILD FROM SOURCE
 #### This project uses **Paket** for ease of use with dependency/package management. Don't just autopilot nuget/dotnet restore, just follow these steps:
