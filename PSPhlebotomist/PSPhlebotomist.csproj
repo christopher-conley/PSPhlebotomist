@@ -7,7 +7,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ProjectGuid>BADB100D-2321-4D45-4F57-4D5ABADB100D</ProjectGuid>
     <LangVersion>latest</LangVersion>
-    <Version>2025.12.21.1240</Version>
+    <Version>2025.12.22.0550</Version>
     <Nullable>enable</Nullable>
     <Authors>Christopher Conley</Authors>
     <Description>It's just a little prick</Description>

@@ -56,6 +56,7 @@ jobs:
           Install-Module -Name "PowerShellGet" -Force -Confirm:$false -Scope CurrentUser
           $ProjectName = "PSPhlebotomist"
           $IconFilename = "PSPhlebotomist_256x256.png"
+          $PSGalleryIconFilename = "PSPhlebotomist_85x85.png"
           $FilesToCopy = @(
               "README.md",
               "LICENSE",
@@ -63,6 +64,10 @@ jobs:
               "$(Join-Path -Path "${ProjectName}" -ChildPath "Properties" -AdditionalChildPath @(
                 "res",
                 "${IconFilename}"
+              ))",
+              "$(Join-Path -Path "${ProjectName}" -ChildPath "Properties" -AdditionalChildPath @(
+                "res",
+                "${PSGalleryIconFilename}"
               ))"
           )
           $PublishPath = Join-Path -Path "${{ github.workspace }}" -ChildPath "${ProjectName}" -AdditionalChildPath @(

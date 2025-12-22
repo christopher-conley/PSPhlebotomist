@@ -8,7 +8,7 @@
     RootModule           = 'PSPhlebotomist.dll'
 
     # Version number of this module.
-    ModuleVersion        = '2025.12.21.1240'
+    ModuleVersion        = '2025.12.22.0550'
 
     # Supported PSEditions
     CompatiblePSEditions = @('Desktop', 'Core')
@@ -114,7 +114,7 @@
             ProjectUri = 'https://github.com/christopher-conley/PSPhlebotomist'
 
             # A URL to an icon representing this module.
-            IconUri = 'https://raw.githubusercontent.com/christopher-conley/PSPhlebotomist/c9a0075290114b4a25ff4abed7cb98fe871b3ae3/PSPhlebotomist/Properties/res/PSPhlebotomist_256x256.png'
+            IconUri = 'https://raw.githubusercontent.com/christopher-conley/PSPhlebotomist/refs/heads/main/PSPhlebotomist/Properties/res/PSPhlebotomist_85x85.png'
 
             # ReleaseNotes of this module
             ReleaseNotes = 'https://github.com/christopher-conley/PSPhlebotomist/releases'
