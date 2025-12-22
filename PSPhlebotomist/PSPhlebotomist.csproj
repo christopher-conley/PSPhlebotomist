@@ -19,6 +19,7 @@
     <PackageProjectUrl>https://github.com/christopher-conley/PSPhlebotomist</PackageProjectUrl>
     <RepositoryUrl>https://github.com/christopher-conley/PSPhlebotomist</RepositoryUrl>
     <Copyright>Copyright (c) 2025 Christopher Conley</Copyright>
+    <PackageIcon>PSPhlebotomist_256x256.png</PackageIcon>
     <RepositoryType>git</RepositoryType>
     <PackageTags>injection;dll-injection;injector;dll-injector;mod;ue4ss;reshade;security</PackageTags>
     <PackageReleaseNotes>Initial release</PackageReleaseNotes>

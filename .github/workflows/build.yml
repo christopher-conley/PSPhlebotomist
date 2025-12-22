@@ -19,16 +19,21 @@ jobs:
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
 
-      - name: install_paket
+      - name: Install Paket
         id: install_paket
         run: |
           dotnet tool install --global Paket
           dotnet tool restore
-          dotnet paket install
-      
-      - name: build_module
-        id: build_module
+
+      - name: Restore project dependencies
+        id: restore_dependencies
         if: ${{ steps.install_paket.outcome == 'success' }}
+        run: |
+          dotnet paket install
+
+      - name: Build PSPhlebotomist PowerShell Module
+        id: build_module
+        if: ${{ steps.restore_dependencies.outcome == 'success' }}
         run: dotnet build --configuration Release PSPhlebotomist.sln
 
       - name: Dotnet publish
@@ -38,6 +43,7 @@ jobs:
 
       - name: Install PowerShell
         id: install_powershell
+        if: ${{ steps.dotnet_publish.outcome == 'success' }}
         uses: PSModule/install-powershell@v1
         with:
           Version: 7.5.4
@@ -49,6 +55,16 @@ jobs:
         run: |
           Install-Module -Name "PowerShellGet" -Force -Confirm:$false -Scope CurrentUser
           $ProjectName = "PSPhlebotomist"
+          $IconFilename = "PSPhlebotomist_256x256.png"
+          $FilesToCopy = @(
+              "README.md",
+              "LICENSE",
+              "VERSION",
+              "$(Join-Path -Path "${ProjectName}" -ChildPath "Properties" -AdditionalChildPath @(
+                "res",
+                "${IconFilename}"
+              ))"
+          )
           $PublishPath = Join-Path -Path "${{ github.workspace }}" -ChildPath "${ProjectName}" -AdditionalChildPath @(
             "bin",
             "Release",
@@ -56,4 +72,9 @@ jobs:
           )
           Set-Location "${PublishPath}"
           Rename-Item -Path ".\publish" -NewName "${ProjectName}"
+
+          foreach ($File in $FilesToCopy)
+          {
+              Copy-Item -Path "$(Join-Path -Path "${{ github.workspace}}" -ChildPath "${File}")" -Destination ".\${ProjectName}\" -Force -Verbose
+          }
           Publish-Module -Path ".\${ProjectName}" -NuGetApiKey ${{ secrets.GALLERY_API_KEY }} -Force -Confirm:$false -Verbose
