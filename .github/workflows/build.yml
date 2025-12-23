@@ -83,6 +83,7 @@ jobs:
             "netstandard2.0"
           )
           Set-Location "${PublishPath}"
+          Copy-Item -Path "./PSPhlebotomist.psd1" -Destination "./publish/PSPhlebotomist.psd1" -Force -Verbose
           Rename-Item -Path ".\publish" -NewName "${ProjectName}"
 
           foreach ($File in $FilesToCopy)
