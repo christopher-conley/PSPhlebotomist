@@ -19,8 +19,23 @@ jobs:
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
 
+      - name: Install PowerShell
+        id: install_powershell
+        uses: PSModule/install-powershell@v1
+        with:
+          Version: 7.5.4
+
+      - name: Install prerequisite PS modules
+        id: install_ps_modules
+        if: ${{ steps.install_powershell.outcome == 'success' }}
+        shell: pwsh
+        run: |
+          Install-Module -Name "PowerShellGet" -Force -Confirm:$false -Scope CurrentUser
+          Install-Module -Name "PlatyPS" -Force -Confirm:$false -Scope CurrentUser
+
       - name: Install Paket
         id: install_paket
+        if : ${{ steps.setup_dotnet.outcome == 'success' && steps.install_powershell.outcome == 'success' }}
         run: |
           dotnet tool install --global Paket
           dotnet tool restore
@@ -40,20 +55,12 @@ jobs:
         id: dotnet_publish
         if: ${{ steps.build_module.outcome == 'success' }}
         run: dotnet publish --configuration Release
-
-      - name: Install PowerShell
-        id: install_powershell
-        if: ${{ steps.dotnet_publish.outcome == 'success' }}
-        uses: PSModule/install-powershell@v1
-        with:
-          Version: 7.5.4
       
-      - name: publish_ps_module
+      - name: Publish PS Module
         id: publish_ps_module
-        if: ${{ steps.install_powershell.outcome == 'success' }}
+        if: ${{ steps.dotnet_publish.outcome == 'success' }}
         shell: pwsh
         run: |
-          Install-Module -Name "PowerShellGet" -Force -Confirm:$false -Scope CurrentUser
           $ProjectName = "PSPhlebotomist"
           $IconFilename = "PSPhlebotomist_256x256.png"
           $PSGalleryIconFilename = "PSPhlebotomist_85x85.png"
