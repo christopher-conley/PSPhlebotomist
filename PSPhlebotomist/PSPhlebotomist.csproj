@@ -7,9 +7,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ProjectGuid>BADB100D-2321-4D45-4F57-4D5ABADB100D</ProjectGuid>
     <LangVersion>latest</LangVersion>
-    <VersionFile Condition="Exists('$(SolutionDir)VERSION')">$(SolutionDir)VERSION</VersionFile>
-    <VersionFile Condition="'$(VersionFile)' == '' And Exists('$(MSBuildProjectDirectory)\..\VERSION')">$(MSBuildProjectDirectory)\..\VERSION</VersionFile>
-    <VersionFile Condition="'$(VersionFile)' == ''">$(MSBuildProjectDirectory)\..\..\VERSION</VersionFile>
+    <VersionFile>$(MSBuildProjectDirectory)\VERSION</VersionFile>
     <AssemblyVersion>$([System.IO.File]::ReadAllText('$(VersionFile)').Trim())</AssemblyVersion>
     <Version>$(AssemblyVersion)</Version>
     <InformationalVersion>$(AssemblyVersion)</InformationalVersion>
