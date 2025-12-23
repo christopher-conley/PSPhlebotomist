@@ -84,8 +84,19 @@
     <Folder Include="docs\" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
-  <Target Name="GenerateHelp" AfterTargets="Build">
+
+  <Target Name="UpdatePsd1Version" AfterTargets="AfterBuild;AfterPublish">
+    <Message Text="Updating PSPhlebotomist.psd1 version to $(AssemblyVersion)" Importance="high" />
+    <Exec Command="pwsh -NoProfile -ExecutionPolicy Bypass -Command &quot;if (Test-Path '$(OutDir)PSPhlebotomist.psd1') { (Get-Content '$(OutDir)PSPhlebotomist.psd1').Replace('REPLACEMEVERSIONSTRING', '$(AssemblyVersion)') | Set-Content '$(OutDir)PSPhlebotomist.psd1' -Encoding utf8; Write-Host 'Updated version in PSPhlebotomist.psd1 to $(AssemblyVersion)' } else { Write-Warning 'PSPhlebotomist.psd1 not found' }&quot;"
+          IgnoreExitCode="false"
+          ContinueOnError="false" />
+  </Target>
+
+  <Target Name="GenerateHelp" AfterTargets="AfterBuild;AfterPublish" DependsOnTargets="UpdatePsd1Version" Condition="Exists('$(ProjectDir)docs\New-Injection.md')" >
     <MakeDir Directories="$(OutDir)en-US" />
-    <Exec Command="pwsh -NoProfile -Command &quot;(Get-Content '$(OutDir)PSPhlebotomist.psd1').Replace('REPLACEMEVERSIONSTRING', '$(AssemblyVersion)') | Set-Content '$(OutDir)PSPhlebotomist.psd1' -Encoding utf8; Import-Module PlatyPS -ErrorAction SilentlyContinue; if ($?) { Import-Module '$(TargetPath)' -Force; Update-MarkdownHelp -Path '$(ProjectDir)docs' -ErrorAction SilentlyContinue; New-ExternalHelp -Path '$(ProjectDir)docs' -OutputPath '$(OutDir)en-US' -Force }&quot;" IgnoreExitCode="true" ContinueOnError="true" />
+    <Message Text="Generating PlatyPS help documentation" Importance="high" />
+    <Exec Command="pwsh -NoProfile -ExecutionPolicy Bypass -Command &quot;Import-Module PlatyPS -ErrorAction SilentlyContinue; if ($?) { Import-Module '$(TargetPath)' -Force -ErrorAction Stop; Update-MarkdownHelp -Path '$(ProjectDir)docs' -ErrorAction SilentlyContinue; New-ExternalHelp -Path '$(ProjectDir)docs' -OutputPath '$(OutDir)en-US' -Force -ErrorAction Stop; Write-Host 'Generated help files in $(OutDir)en-US' } else { Write-Warning 'PlatyPS module not found, skipping help generation' }&quot;"
+          IgnoreExitCode="true"
+          ContinueOnError="true" />
   </Target>
 </Project>

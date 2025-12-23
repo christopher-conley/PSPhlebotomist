@@ -49,7 +49,7 @@ jobs:
       - name: Build PSPhlebotomist PowerShell Module
         id: build_module
         if: ${{ steps.restore_dependencies.outcome == 'success' }}
-        run: dotnet build --configuration Release PSPhlebotomist.sln
+        run: dotnet build --configuration Release --verbosity detailed PSPhlebotomist.sln
 
       - name: Dotnet publish
         id: dotnet_publish
