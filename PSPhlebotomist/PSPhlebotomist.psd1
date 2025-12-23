@@ -8,7 +8,7 @@
     RootModule           = 'PSPhlebotomist.dll'
 
     # Version number of this module.
-    ModuleVersion        = '2025.12.22.1639'
+    ModuleVersion        = 'REPLACEMEVERSIONSTRING'
 
     # Supported PSEditions
     CompatiblePSEditions = @('Desktop', 'Core')
@@ -20,7 +20,7 @@
     Author               = 'Christopher Conley'
 
     # Company or vendor of this module
-    CompanyName          = 'RosettaTools'
+    CompanyName          = 'Rosetta Stoned Software'
 
     # Copyright statement for this module
     Copyright            = '(c) 2025 Christopher Conley. All rights reserved.'
@@ -104,7 +104,11 @@
             "mod",
             "ue4ss",
             "reshade",
-            "security"
+            "security",
+            "powershell",
+            "pwsh",
+            "powershell-module",
+            "pwsh-module"
             )
 
             # A URL to the license for this module.

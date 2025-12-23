@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -7,7 +7,11 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ProjectGuid>BADB100D-2321-4D45-4F57-4D5ABADB100D</ProjectGuid>
     <LangVersion>latest</LangVersion>
-    <Version>2025.12.22.1639</Version>
+    <AssemblyVersion>$([System.IO.File]::ReadAllText("VERSION").Trim())</AssemblyVersion>
+    <Version>$(AssemblyVersion)</Version>
+    <InformationalVersion>$(AssemblyVersion)</InformationalVersion>
+    <ProductVersion>$(AssemblyVersion)</ProductVersion>
+    <FileVersion>$(AssemblyVersion)</FileVersion>
     <Nullable>enable</Nullable>
     <Authors>Christopher Conley</Authors>
     <Description>It's just a little prick</Description>
@@ -39,8 +43,8 @@
 
   <ItemGroup>
     <None Include="bin\Release\netstandard2.0\publish\**">
-    <Pack>True</Pack>
-    <PackagePath>\lib</PackagePath>
+      <Pack>True</Pack>
+      <PackagePath>\lib</PackagePath>
     </None>
   </ItemGroup>
 
@@ -76,5 +80,12 @@
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="docs\" />
+  </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
+  <Target Name="GenerateHelp" AfterTargets="Build">
+    <MakeDir Directories="$(OutDir)en-US" />
+    <Exec Command="pwsh -NoProfile -Command &quot;(Get-Content '$(OutDir)PSPhlebotomist.psd1').Replace('REPLACEMEVERSIONSTRING', '$(AssemblyVersion)') | Set-Content '$(OutDir)PSPhlebotomist.psd1' -Encoding utf8; Import-Module PlatyPS -ErrorAction SilentlyContinue; if ($?) { Import-Module '$(TargetPath)' -Force; Update-MarkdownHelp -Path '$(ProjectDir)docs' -ErrorAction SilentlyContinue; New-ExternalHelp -Path '$(ProjectDir)docs' -OutputPath '$(OutDir)en-US' -Force }&quot;" IgnoreExitCode="true" ContinueOnError="true" />
+  </Target>
 </Project>
