@@ -86,17 +86,37 @@
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
 
-  <Target Name="UpdatePsd1Version" AfterTargets="AfterBuild;AfterPublish">
-    <Message Text="Updating PSPhlebotomist.psd1 version to $(AssemblyVersion)" Importance="high" />
-    <Exec Command="pwsh -NoProfile -ExecutionPolicy Bypass -Command &quot;if (Test-Path '$(OutDir)PSPhlebotomist.psd1') { (Get-Content '$(OutDir)PSPhlebotomist.psd1').Replace('REPLACEMEVERSIONSTRING', '$(AssemblyVersion)') | Set-Content '$(OutDir)PSPhlebotomist.psd1' -Encoding utf8; Write-Host 'Updated version in PSPhlebotomist.psd1 to $(AssemblyVersion)' } else { Write-Warning 'PSPhlebotomist.psd1 not found' }&quot;"
-          IgnoreExitCode="false"
-          ContinueOnError="false" />
+  <!-- Update PSD1 version after build/publish -->
+  <Target Name="UpdatePsd1Version" AfterTargets="Build;Publish">
+    <Message Text="[UpdatePsd1Version] OutDir: $(OutDir), PublishDir: $(PublishDir), Version: $(AssemblyVersion)" Importance="high" />
+
+    <!-- Determine the correct output directory -->
+    <PropertyGroup>
+      <Psd1OutputDir Condition="'$(PublishDir)' != ''">$(PublishDir)</Psd1OutputDir>
+      <Psd1OutputDir Condition="'$(PublishDir)' == ''">$(OutDir)</Psd1OutputDir>
+    </PropertyGroup>
+
+    <Message Text="[UpdatePsd1Version] Using directory: $(Psd1OutputDir)" Importance="high" />
+
+    <Exec Command="pwsh -NoProfile -ExecutionPolicy Bypass -Command &quot;Write-Host '[UpdatePsd1Version] Checking PSD1...'; $psd1Path = Join-Path '$(Psd1OutputDir)' 'PSPhlebotomist.psd1'; Write-Host '[UpdatePsd1Version] Looking for:' $psd1Path; if (Test-Path $psd1Path) { Write-Host '[UpdatePsd1Version] Found PSD1'; $content = Get-Content $psd1Path -Raw; if ($content -match 'REPLACEMEVERSIONSTRING') { Write-Host '[UpdatePsd1Version] Replacing placeholder...'; $updated = $content.Replace('REPLACEMEVERSIONSTRING', '$(AssemblyVersion)'); Set-Content $psd1Path -Value $updated -Encoding utf8 -NoNewline; Write-Host '[UpdatePsd1Version] ✓ Updated to $(AssemblyVersion)' } else { Write-Host '[UpdatePsd1Version] Already updated or no placeholder found' } } else { Write-Warning '[UpdatePsd1Version] ✗ PSD1 not found at:' $psd1Path; Write-Host 'Directory contents:'; Get-ChildItem '$(Psd1OutputDir)' | Format-Table Name }&quot;"
+          IgnoreExitCode="true"
+          ContinueOnError="true" />
   </Target>
 
-  <Target Name="GenerateHelp" AfterTargets="AfterBuild;AfterPublish" DependsOnTargets="UpdatePsd1Version" Condition="Exists('$(ProjectDir)docs\New-Injection.md')" >
-    <MakeDir Directories="$(OutDir)en-US" />
-    <Message Text="Generating PlatyPS help documentation" Importance="high" />
-    <Exec Command="pwsh -NoProfile -ExecutionPolicy Bypass -Command &quot;Import-Module PlatyPS -ErrorAction SilentlyContinue; if ($?) { Import-Module '$(TargetPath)' -Force -ErrorAction Stop; Update-MarkdownHelp -Path '$(ProjectDir)docs' -ErrorAction SilentlyContinue; New-ExternalHelp -Path '$(ProjectDir)docs' -OutputPath '$(OutDir)en-US' -Force -ErrorAction Stop; Write-Host 'Generated help files in $(OutDir)en-US' } else { Write-Warning 'PlatyPS module not found, skipping help generation' }&quot;"
+  <!-- Generate help documentation -->
+  <Target Name="GenerateHelp" AfterTargets="UpdatePsd1Version" Condition="Exists('$(ProjectDir)docs\New-Injection.md')">
+    <Message Text="[GenerateHelp] Starting..." Importance="high" />
+
+    <!-- Determine the correct output directory -->
+    <PropertyGroup>
+      <HelpOutputDir Condition="'$(PublishDir)' != ''">$(PublishDir)</HelpOutputDir>
+      <HelpOutputDir Condition="'$(PublishDir)' == ''">$(OutDir)</HelpOutputDir>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(HelpOutputDir)en-US" />
+
+    <!-- Use -Scope CurrentUser to ensure the module is found -->
+    <Exec Command="pwsh -NoProfile -ExecutionPolicy Bypass -Command &quot;Write-Host '[GenerateHelp] Module path:' $env:PSModulePath; Write-Host '[GenerateHelp] Checking for PlatyPS...'; if (-not (Get-Module -ListAvailable -Name PlatyPS)) { Write-Host '[GenerateHelp] Installing PlatyPS to CurrentUser scope...'; Install-Module -Name PlatyPS -Scope CurrentUser -Force -SkipPublisherCheck }; Import-Module PlatyPS -ErrorAction Stop; Write-Host '[GenerateHelp] ✓ PlatyPS loaded'; Write-Host '[GenerateHelp] Importing module from: $(TargetPath)'; Import-Module '$(TargetPath)' -Force -ErrorAction Stop; Write-Host '[GenerateHelp] ✓ Module loaded'; Write-Host '[GenerateHelp] Updating Markdown...'; Update-MarkdownHelp -Path '$(ProjectDir)docs' -ErrorAction SilentlyContinue; Write-Host '[GenerateHelp] Generating MAML...'; New-ExternalHelp -Path '$(ProjectDir)docs' -OutputPath '$(HelpOutputDir)en-US' -Force -ErrorAction Stop; Write-Host '[GenerateHelp] ✓ Help generated in $(HelpOutputDir)en-US'&quot;"
           IgnoreExitCode="true"
           ContinueOnError="true" />
   </Target>
