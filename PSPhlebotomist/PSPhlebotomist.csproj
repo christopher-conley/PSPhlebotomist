@@ -7,7 +7,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ProjectGuid>BADB100D-2321-4D45-4F57-4D5ABADB100D</ProjectGuid>
     <LangVersion>latest</LangVersion>
-    <AssemblyVersion>$([System.IO.File]::ReadAllText("VERSION").Trim())</AssemblyVersion>
+    <AssemblyVersion>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)\..\VERSION').Trim())</AssemblyVersion>
     <Version>$(AssemblyVersion)</Version>
     <InformationalVersion>$(AssemblyVersion)</InformationalVersion>
     <ProductVersion>$(AssemblyVersion)</ProductVersion>
