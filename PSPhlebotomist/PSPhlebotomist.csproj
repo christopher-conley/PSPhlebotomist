@@ -98,7 +98,7 @@
 
     <Message Text="[UpdatePsd1Version] Using directory: $(Psd1OutputDir)" Importance="high" />
 
-    <Exec Command="pwsh -NoProfile -ExecutionPolicy Bypass -Command &quot;Write-Host '[UpdatePsd1Version] Checking PSD1...'; $psd1Path = Join-Path '$(Psd1OutputDir)' 'PSPhlebotomist.psd1'; Write-Host '[UpdatePsd1Version] Looking for:' $psd1Path; if (Test-Path $psd1Path) { Write-Host '[UpdatePsd1Version] Found PSD1'; $content = Get-Content $psd1Path -Raw; if ($content -match 'REPLACEMEVERSIONSTRING') { Write-Host '[UpdatePsd1Version] Replacing placeholder...'; $updated = $content.Replace('REPLACEMEVERSIONSTRING', '$(AssemblyVersion)'); Set-Content $psd1Path -Value $updated -Encoding utf8 -NoNewline; Write-Host '[UpdatePsd1Version] ✓ Updated to $(AssemblyVersion)' } else { Write-Host '[UpdatePsd1Version] Already updated or no placeholder found' } } else { Write-Warning '[UpdatePsd1Version] ✗ PSD1 not found at:' $psd1Path; Write-Host 'Directory contents:'; Get-ChildItem '$(Psd1OutputDir)' | Format-Table Name }&quot;"
+    <Exec Command="pwsh -NoProfile -ExecutionPolicy Bypass -Command &quot;Write-Host '[UpdatePsd1Version] Looking for:' $(OutDir)PSPhlebotomist.psd1; if (Test-Path $(OutDir)PSPhlebotomist.psd1) { Write-Host '[UpdatePsd1Version] Found PSD1'; Write-Host '[UpdatePsd1Version] Replacing placeholder...'; (Get-Content $(OutDir)PSPhlebotomist.psd1 -Raw).Replace('REPLACEMEVERSIONSTRING', '$(AssemblyVersion)') | Set-Content $(OutDir)PSPhlebotomist.psd1 -Encoding utf8 -NoNewline; } else { Write-Warning '[UpdatePsd1Version] ✗ PSD1 not found at:' $(OutDir)PSPhlebotomist.psd1; Write-Host 'Directory contents:'; Get-ChildItem '$(OutDir)' | Format-Table Name }&quot;"
           IgnoreExitCode="true"
           ContinueOnError="true" />
   </Target>
