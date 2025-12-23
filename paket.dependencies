@@ -33,4 +33,3 @@ nuget Serilog.Sinks.File
 nuget Serilog.Sinks.Map
 nuget Serilog.Sinks.Spectre
 nuget Serilog.Sinks.TextWriter
-

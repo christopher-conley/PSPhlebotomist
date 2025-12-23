@@ -23,6 +23,7 @@
     <PackageTags>injection;dll-injection;injector;dll-injector;mod;ue4ss;reshade;security</PackageTags>
     <PackageReleaseNotes>Initial release</PackageReleaseNotes>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\LICENSE">
