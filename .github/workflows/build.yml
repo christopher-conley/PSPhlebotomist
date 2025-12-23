@@ -67,7 +67,7 @@ jobs:
           $FilesToCopy = @(
               "README.md",
               "LICENSE",
-              "VERSION",
+              "${ProjectName}/VERSION",
               "$(Join-Path -Path "${ProjectName}" -ChildPath "Properties" -AdditionalChildPath @(
                 "res",
                 "${IconFilename}"
